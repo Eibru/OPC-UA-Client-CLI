@@ -1,6 +1,6 @@
 ﻿using Opc.Ua;
 using Opc.Ua.Client;
-using OpcUaCli.Client.Models;
+using OpcUaCli.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace OpcUaCli.Client;
+namespace OpcUaCli.OPCUA;
 public class OpcController {
     public string Host { get; private set; }
     public bool Connected { get; private set; }
@@ -179,7 +179,7 @@ public class OpcController {
         return new NodeDTO {
             Name = node.DisplayName.Text,
             NodeId = node.NodeId.ToString(),
-            NodeClass = node.NodeClass,
+            //NodeClass = node.NodeClass,
             Attributes = await ReadNodeAttributes(nodeId)
         };
     }
@@ -201,7 +201,7 @@ public class OpcController {
         var list = new List<NodeDTO>();
 
         foreach(var node in rdc) {
-            list.Add(new NodeDTO { Name = node.DisplayName.Text, NodeId = node.NodeId.ToString(), NodeClass = node.NodeClass, Attributes = await ReadNodeAttributes(node.NodeId.ToString()) });
+            list.Add(new NodeDTO { Name = node.DisplayName.Text, NodeId = node.NodeId.ToString(), Attributes = await ReadNodeAttributes(node.NodeId.ToString()) });
         }
 
         return list;

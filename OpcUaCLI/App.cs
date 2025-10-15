@@ -1,6 +1,7 @@
 ﻿using Opc.Ua;
 using Opc.Ua.Client;
-using OpcUaCli.Client.Models;
+using OpcUaCli.OPCUA;
+using OpcUaCli.Shared.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -166,10 +167,10 @@ public class App {
 
         var col1Width = nodes.Max(x => x.Name.Length) + 5;
         var col2Width = nodes.Max(x => x.NodeId.Length) + 5;
-        var col3Width = nodes.Max(x => x.NodeClass.ToString().Length) + 5;
+        var col3Width = nodes.Max(x => x.Attributes.FirstOrDefault(x => x.AttributeId == 2)?.ToString()?.Length ?? 0) + 5;
 
         foreach (var item in nodes) {
-            Console.WriteLine($"{{0,{-col1Width}}} {{1,{-col2Width}}} {{2,{-col3Width}}}", item.Name, item.NodeId, item.NodeClass);
+            Console.WriteLine($"{{0,{-col1Width}}} {{1,{-col2Width}}} {{2,{-col3Width}}}", item.Name, item.NodeId, item.Attributes.FirstOrDefault(x => x.AttributeId == 2)?.Value?.ToString() ?? "Unknown");
         }
 
         Console.WriteLine();

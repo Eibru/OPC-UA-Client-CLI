@@ -1,6 +1,7 @@
 ﻿using Opc.Ua;
 using Opc.Ua.Client;
-using OpcUaCli.Client.Models;
+using OpcUaCli.OPCUA;
+using OpcUaCli.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
