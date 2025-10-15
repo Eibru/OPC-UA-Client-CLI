@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpcUaCli.Client", "OpcUaCLI\OpcUaCli.Client.csproj", "{755C640A-37CC-2D72-297C-1B2F96047139}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{755C640A-37CC-2D72-297C-1B2F96047139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{755C640A-37CC-2D72-297C-1B2F96047139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{755C640A-37CC-2D72-297C-1B2F96047139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{755C640A-37CC-2D72-297C-1B2F96047139}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD404FC7-0C38-4704-85EE-3EE538D67B8F}
+	EndGlobalSection
+EndGlobal
