@@ -1,6 +1,6 @@
 ﻿using Opc.Ua;
 using Opc.Ua.Client;
-using OpcUaCli.Shared.Models;
+using OpcUaClientCli.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace OpcUaCli.OPCUA;
+namespace OpcUaClientCli.OPC;
 public class OpcController {
     public string Host { get; private set; }
     public bool Connected { get; private set; }
@@ -138,9 +138,14 @@ public class OpcController {
         Connected = false;
     }
 
-    public async Task<List<NodeAttributeDTO>> ReadNodeAttributes(string nodeId) {
+    public async Task<NodeDTO> ReadNode(string nodeId, bool readAttributes = false) {
         var readValueIdCollection = new ReadValueIdCollection();
         var node = await _session.ReadNodeAsync(nodeId);
+
+        var nodeDto = new NodeDTO() { Name = node.DisplayName.Text, NodeId = node.NodeId.ToString(), Attributes = new List<NodeAttributeDTO>(), NodeClass = node.NodeClass.ToString() };
+
+        if (!readAttributes)
+            return nodeDto;
 
         foreach (var attr in AttributeIds) {
             if (node.SupportsAttribute(attr)) {
@@ -165,23 +170,18 @@ public class OpcController {
                 var dataTypeNode = await _session.ReadNodeAsync((NodeId)value);
 
                 value = dataTypeNode.DisplayName;
+            } else if(attributeId == Attributes.Value) {
+                if(value is ExtensionObject eo) {
+                    value = eo.Body;
+                }
             }
 
-            list.Add(new NodeAttributeDTO { Name = name, Value = value, AttributeId = attributeId });
+                list.Add(new NodeAttributeDTO { Name = name, Value = value, AttributeId = attributeId });
         }
-        
-        return list;
-    }
 
-    public async Task<NodeDTO> ReadNode(string nodeId) {
-        var node = await _session.ReadNodeAsync(nodeId);
+        nodeDto.Attributes = list;
 
-        return new NodeDTO {
-            Name = node.DisplayName.Text,
-            NodeId = node.NodeId.ToString(),
-            //NodeClass = node.NodeClass,
-            Attributes = await ReadNodeAttributes(nodeId)
-        };
+        return nodeDto;
     }
 
     public async Task Write(string nodeId, uint attributeId, object value) {
@@ -200,9 +200,8 @@ public class OpcController {
         var (responseHeader, bytes, rdc) = await _session.BrowseAsync(null, null, nodeId, 0, BrowseDirection.Forward, ReferenceTypeIds.HierarchicalReferences, true, (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method | (uint)NodeClass.VariableType | (uint)NodeClass.DataType | (uint)NodeClass.ReferenceType | (uint)NodeClass.ObjectType | (uint)NodeClass.Unspecified | (uint)NodeClass.View);
         var list = new List<NodeDTO>();
 
-        foreach(var node in rdc) {
-            list.Add(new NodeDTO { Name = node.DisplayName.Text, NodeId = node.NodeId.ToString(), Attributes = await ReadNodeAttributes(node.NodeId.ToString()) });
-        }
+        foreach(var node in rdc) 
+            list.Add(await ReadNode(node.NodeId.ToString()));
 
         return list;
     }
@@ -215,7 +214,6 @@ public class OpcController {
             for (int i = 0; i < depth; i++) {
                 spaces += "    ";
             }
-
 
             Console.WriteLine(spaces + item.DisplayName.Text + " - " + item.NodeId.ToString() + " - " + item.NodeClass.ToString());
             if (item.NodeClass == NodeClass.Variable) {
@@ -234,4 +232,5 @@ public class OpcController {
         }
     }
 
+    public static string GetRootNodeId => ObjectIds.RootFolder.ToString();
 }

@@ -1,7 +1,5 @@
-﻿using Opc.Ua;
-using Opc.Ua.Client;
-using OpcUaCli.OPCUA;
-using OpcUaCli.Shared.Models;
+﻿using OpcUaClientCli.OPC;
+using OpcUaClientCli.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace OpcUaCli.Client;
+namespace OpcUaClientCli.UI;
 public class OpcBrowser {
     private OpcController _opcController;
 
@@ -25,7 +23,7 @@ public class OpcBrowser {
     }
 
     public async Task<bool> Init() {
-        var node = await _opcController.ReadNode(ObjectIds.RootFolder.ToString());
+        var node = await _opcController.ReadNode(OpcController.GetRootNodeId);
         var nodes = await _opcController.Browse(node.NodeId);
         BrowsePath.Add(node);
         SelectedNode = node;

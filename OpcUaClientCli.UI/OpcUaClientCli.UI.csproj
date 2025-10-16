@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpcUaCli.Client.OPCUA\OpcUaCli.OPCUA.csproj" />
-    <ProjectReference Include="..\OpcUaCli.Shared\OpcUaCli.Shared.csproj" />
+    <ProjectReference Include="..\OpcUaClientCli.OPC\OpcUaClientCli.OPC.csproj" />
+    <ProjectReference Include="..\OpcUaClientCli.Shared\OpcUaClientCli.Shared.csproj" />
   </ItemGroup>
 
 </Project>

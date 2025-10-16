@@ -1,7 +1,9 @@
 ﻿
 
 
-using OpcUaCli.Client;
+
+
+using OpcUaClientCli.UI;
 
 var app = new App();
 

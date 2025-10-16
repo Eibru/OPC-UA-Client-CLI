@@ -1,7 +1,5 @@
-﻿using Opc.Ua;
-using Opc.Ua.Client;
-using OpcUaCli.OPCUA;
-using OpcUaCli.Shared.Models;
+﻿using OpcUaClientCli.OPC;
+using OpcUaClientCli.Shared.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpcUaCli.Client;
+namespace OpcUaClientCli.UI;
 public class App {
     private OpcController _controller;
     private OpcBrowser _browser;
+
+    private NodeDTO _selectedNode;
+    private List<NodeDTO> _availableNodes;
+    private List<NodeDTO> _browsePath;
 
     public App() {
         _controller = new OpcController();
@@ -110,18 +112,20 @@ public class App {
         }
 
         if (cmd == "read") {
-            NodeDTO node;
+            string nodeId;
 
             if (!string.IsNullOrEmpty(args))
-                node = _browser.AvailableNodes.FirstOrDefault(x => x.Name == args);
+                nodeId = _browser.AvailableNodes.FirstOrDefault(x => x.Name == args)?.NodeId;
             else
-                node = _browser.SelectedNode;
+                nodeId = _browser.SelectedNode?.NodeId;
 
-            if (node == null) {
+            if (nodeId == null) {
                 Console.WriteLine("Node was not found");
                 Console.WriteLine();
                 return;
             }
+
+            var node = await _controller.ReadNode(nodeId, true);
 
             ShowNodeInfo(node);
 
@@ -129,6 +133,13 @@ public class App {
         }
 
         if(cmd == "write") {
+            var arguments = args.Split(" ");
+            if(arguments.Length < 2) {
+                Console.WriteLine("Missing arguments");
+                Console.WriteLine("");
+                return;
+            }
+
             Console.WriteLine("Not implemented");
             Console.WriteLine();
             return;
@@ -167,10 +178,10 @@ public class App {
 
         var col1Width = nodes.Max(x => x.Name.Length) + 5;
         var col2Width = nodes.Max(x => x.NodeId.Length) + 5;
-        var col3Width = nodes.Max(x => x.Attributes.FirstOrDefault(x => x.AttributeId == 2)?.ToString()?.Length ?? 0) + 5;
+        var col3Width = nodes.Max(x => x.NodeClass.Length) + 5;
 
         foreach (var item in nodes) {
-            Console.WriteLine($"{{0,{-col1Width}}} {{1,{-col2Width}}} {{2,{-col3Width}}}", item.Name, item.NodeId, item.Attributes.FirstOrDefault(x => x.AttributeId == 2)?.Value?.ToString() ?? "Unknown");
+            Console.WriteLine($"{{0,{-col1Width}}} {{1,{-col2Width}}} {{2,{-col3Width}}}", item.Name, item.NodeId, item.NodeClass);
         }
 
         Console.WriteLine();
@@ -200,9 +211,9 @@ public class App {
             return "[" + string.Join(",", str) + "]";
         }
 
-        if(obj is ExtensionObject extObj) {
-            return ObjectToString(extObj.Body);
-        }
+        //if(obj is ExtensionObject extObj) {
+        //    return ObjectToString(extObj.Body);
+        //}
 
         //if (obj is byte) {
         //    return Convert.ToString((byte)obj, 2).PadLeft(8, '0');

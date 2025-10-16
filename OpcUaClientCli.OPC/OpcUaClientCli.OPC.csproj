@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OpcUaCli.Shared\OpcUaCli.Shared.csproj" />
+    <ProjectReference Include="..\OpcUaClientCli.Shared\OpcUaClientCli.Shared.csproj" />
   </ItemGroup>
 
 </Project>
